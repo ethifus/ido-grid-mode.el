@@ -111,7 +111,7 @@ If this is a low number, the column widths will change more when scrolling."
   :type 'integer
   :group 'ido-grid-mode)
 
-(defcustom ido-grid-mode-padding "    "
+(defcustom ido-grid-mode-padding "   "
   "The padding text to put between columns - this can contain characters like | if you like."
   :type 'string
   :group 'ido-grid-mode)
@@ -136,7 +136,7 @@ displays more detail about this."
   :group 'ido-grid-mode)
 
 (defcustom ido-grid-mode-prefix-scrolls nil
-  "Whether the prefix arrow should go on the row where the current item is."
+  "Whether the prefix arrow should go on the row and column where the current item is."
   :type 'boolean
   :group 'ido-grid-mode)
 
@@ -424,10 +424,11 @@ rows or columns."
       (string-width s))))
 
 (defun ido-grid-mode-padding-and-label (offset row col indicator-row row-padding)
-  (let* ((result
-          (if (zerop col)
-              (if (= row indicator-row) ido-grid-mode-prefix row-padding)
-            ido-grid-mode-padding))
+  (let* ((result (if (and
+                      ido-grid-mode-prefix-scrolls
+                      (= row indicator-row)
+                      (= offset ido-grid-mode-offset))
+                     ido-grid-mode-prefix ido-grid-mode-padding))
          (lr (length result)))
     (when (and (eq ido-grid-mode-jump 'label)
                (< 0 offset 11))
